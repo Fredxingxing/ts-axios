@@ -4,7 +4,10 @@ export interface AxiosRequestConfig {
   data?: any
   params?: any
   headers?: any
+  // "" | "arraybuffer" | "blob" | "document" | "json" | "text"
+  responseType?: XMLHttpRequestResponseType
 }
+
 export type Method =
   | 'get'
   | 'GET'
@@ -20,3 +23,14 @@ export type Method =
   | 'PUT'
   | 'patch'
   | 'PATCH'
+
+export interface AxiosResponse {
+  data: any
+  status: number
+  statusText: string
+  headers: any
+  config: AxiosRequestConfig
+  request: any
+}
+
+export interface AxiosPromise extends Promise<AxiosResponse> {}
