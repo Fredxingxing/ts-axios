@@ -7,14 +7,13 @@ export function transformRequest(data: any): any {
   return data
 }
 
-export function transformResponseData(data: any): any {
-  let newData = data
+export function transformResponse(data: any): any {
   if (typeof data === 'string') {
     try {
-      newData = JSON.parse(data)
+      data = JSON.parse(data)
     } catch (e) {
       // do nothing
     }
   }
-  return newData
+  return data
 }

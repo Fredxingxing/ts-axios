@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
+import { parseHeaders } from './helpers/header'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise(resolve => {
@@ -11,18 +12,22 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
     request.open(method.toUpperCase(), url, true)
 
+    // 当 readyState 的值改变的时候，callback 函数会被调用。
     request.onreadystatechange = function handleLoad() {
       if (request.readyState !== 4) {
         return
       }
       const responseHeaders = request.getAllResponseHeaders()
+      // 字符串转对象
+      const responseParseHeaders = parseHeaders(responseHeaders)
+
       const responseData =
         responseType && responseType !== 'text' ? request.response : request.responseText
       const response: AxiosResponse = {
         data: responseData,
         status: request.status,
         statusText: request.statusText,
-        headers: responseHeaders,
+        headers: responseParseHeaders,
         config,
         request
       }
