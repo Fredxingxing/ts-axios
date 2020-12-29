@@ -1,6 +1,9 @@
-import InterceptorManager from '../core/interceptor'
+import { Interceptors } from '../core/interceptor'
 
 export interface Axios {
+  defaults: AxiosRequestConfig
+  interceptors: Interceptors
+
   request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
   get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
@@ -18,13 +21,20 @@ export interface Axios {
   patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
-export interface AxiosInstance extends Axios {
-  <T = any>(interceptors: AxiosInterceptorManager<T>): number | void
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
 
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
+}
+
+export interface AxiosInstance extends Axios {
   <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
+
 export interface AxiosInterceptorManager<T> {
   use(resolved: ResolvedFn<T>, rejected: RejectedFn): number
 
@@ -40,7 +50,10 @@ export interface RejectedFn {
 }
 
 export interface AxiosRequestConfig {
-  url: string
+  // 这种索引的方式访问，所以需要给 AxiosRequestConfig 的接口定义添加一个字符串索引签名：
+  [propName: string]: any
+
+  url?: string
   method?: Method
   data?: any
   params?: any
@@ -48,6 +61,13 @@ export interface AxiosRequestConfig {
   // "" | "arraybuffer" | "blob" | "document" | "json" | "text"
   responseType?: XMLHttpRequestResponseType
   timeout?: number
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+  cancelToken?: CancelToken
+}
+
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
 }
 
 export type Method =
@@ -83,4 +103,38 @@ export interface AxiosError extends Error {
   request?: any
   response?: AxiosResponse
   isAxiosError: boolean
+}
+
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel
+
+  throwIfRequested(): void
+}
+
+export interface Canceler {
+  (message?: string): void
+}
+
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+
+export interface CancelTokenStatic {
+  new (executor: CancelExecutor): CancelToken
+
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+
+export interface CancelStatic {
+  new (message?: string): Cancel
 }

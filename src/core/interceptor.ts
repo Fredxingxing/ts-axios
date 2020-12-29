@@ -1,8 +1,13 @@
-import { ResolvedFn, RejectedFn } from '../types'
+import { ResolvedFn, RejectedFn, AxiosRequestConfig, AxiosResponse } from '../types'
 
 interface Interceptor<T> {
   resolved: ResolvedFn<T>
   rejected?: RejectedFn
+}
+
+export interface Interceptors {
+  request: InterceptorManager<AxiosRequestConfig>
+  response: InterceptorManager<AxiosResponse>
 }
 
 export default class InterceptorManager<T> {

@@ -69,10 +69,26 @@ router.get('/error/get', function(req, res) {
 router.get('/error/timeout', function(req, res) {
   setTimeout(() => {
     res.json({
+      msg: `hello world`,
+      data: {}
+    })
+  }, 3000)
+})
+
+// 默认配置合并
+router.post('/config/post', function(req, res) {
+  res.json(req.body)
+})
+
+// 取消请求
+router.get('/cancel/get', function(req, res) {
+  setTimeout(() => {
+    res.json({
       msg: `hello world`
     })
   }, 3000)
 })
+
 app.use(router)
 
 const port = process.env.PORT || 8080
