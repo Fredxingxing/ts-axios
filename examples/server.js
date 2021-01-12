@@ -5,6 +5,8 @@ const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const WebpackConfig = require('./webpack.config')
 
+require('./server2')
+
 const app = express()
 const compiler = webpack(WebpackConfig)
 
@@ -87,6 +89,11 @@ router.get('/cancel/get', function(req, res) {
       msg: `hello world`
     })
   }, 3000)
+})
+
+// withCredentials
+router.get('/more/get', function(req, res) {
+  res.json(req.cookies)
 })
 
 app.use(router)
