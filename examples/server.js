@@ -23,7 +23,6 @@ app.use(express.static(__dirname))
 app.use(bodyParser.json())
 
 app.use(bodyParser.urlencoded({ extended: true }))
-
 const router = express.Router()
 router.get('/simple/get', function(req, res) {
   res.json({
@@ -95,7 +94,24 @@ router.get('/cancel/get', function(req, res) {
 router.get('/more/get', function(req, res) {
   res.json(req.cookies)
 })
+// withCredentials
 
+router.get('/xsrf/setCookie', function(req, res) {
+  res.cookie('XSRF-TOKEN-D', '1234abc')
+  res.send('success for set cookie')
+})
+
+const multipart = require('connect-multiparty')
+app.use(
+  multipart({
+    uploadDir: path.resolve(__dirname, 'upload-file')
+  })
+)
+
+router.post('/more/upload', function(req, res) {
+  console.log(req.body, req.files)
+  res.end('upload success!')
+})
 app.use(router)
 
 const port = process.env.PORT || 8080

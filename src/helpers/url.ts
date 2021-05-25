@@ -51,3 +51,29 @@ export function buildURL(url: string, params?: any) {
 
   return url
 }
+
+// XSRF 防御
+interface URLOrigin {
+  protocol: string
+  host: string
+}
+
+// 设置href 然后获取DOM的 protocol、host
+const urlParsingNode = document.createElement('a')
+const currentOrigin = resolveURL(window.location.href)
+
+export function isURLSameOrigin(requestURL: string): boolean {
+  const parsedOrigin = resolveURL(requestURL)
+  return (
+    parsedOrigin.protocol === currentOrigin.protocol && parsedOrigin.host === currentOrigin.host
+  )
+}
+
+function resolveURL(url: string): URLOrigin {
+  urlParsingNode.setAttribute('href', url)
+  const { protocol, host } = urlParsingNode
+  return {
+    protocol,
+    host
+  }
+}
